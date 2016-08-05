@@ -52,9 +52,10 @@ def ieee_search(word):
     #ieee_bibtex(arnumber)
 
 def acm_search(word):
+    headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.82 Safari/537.36 OPR/39.0.2256.48'}
     s = requests.Session()
     count = 0
-    r =  s.get("http://dl.acm.org/exportformats_search.cfm?query="+ word+"&filtered=&within=owners%2Eowner%3DGUIDE&dte=&bfr=&srt=%5Fscore&expformat=bibtex", stream = True)
+    r =  s.get("http://dl.acm.org/exportformats_search.cfm?query="+ word+"&filtered=&within=owners%2Eowner%3DGUIDE&dte=&bfr=&srt=%5Fscore&expformat=bibtex", stream = True,headers=headers)
     r.raise_for_status()
 
     your_maximum = 2048
