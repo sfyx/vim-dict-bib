@@ -66,7 +66,7 @@ fun! s:dict(word)
     "    endfor
     "endfor
 
-    silent! exe escape("noautocmd r! curl -s 'http://cn.bing.com/dict/search?q=".join(split(word), "+")."&form=BDVSP6&mkt=zh-cn' | hxnormalize -x |hxremove '.sen_ime' | hxremove '.li_ex' | hxremove '.wd_div' | hxremove '.df_div .tb_div' | hxremove '.pos_lin' | hxremove '.pos1' | hxremove '.hw_ti' | hxremove '.sen_li' | hxremove '.web_area' |  hxselect '.lf_area' | hxremove '.filter' | hxremove '#filshow' | hxremove '#filhide' | hxremove 'img' | hxremove '.bi_pag' | hxremove '.gra' | hxremove '.dis' | hxremove '.infor' | hxremove '.dymp_link' | html2text -utf8 -width 150 -nobs ","#")
+    silent! exe escape("noautocmd r! curl -s 'https://bing.com/dict/search?q=".join(split(word), "+")."&form=BDVSP6&mkt=zh-cn' | hxnormalize -x |hxremove '.sen_ime' | hxremove '.li_ex' | hxremove '.wd_div' | hxremove '.df_div .tb_div' | hxremove '.pos_lin' | hxremove '.pos1' | hxremove '.hw_ti' | hxremove '.sen_li' | hxremove '.web_area' |  hxselect '.lf_area' | hxremove '.filter' | hxremove '#filshow' | hxremove '#filhide' | hxremove 'img' | hxremove '.bi_pag' | hxremove '.gra' | hxremove '.dis' | hxremove '.infor' | hxremove '.dymp_link' | html2text -utf8 -width 150 -nobs ","#")
 
     silent! exe "%s/&quot;/\"/g"
     silent! exe "%s/\\([0-9][0-9]*.\\)\\n/\\1 /g"

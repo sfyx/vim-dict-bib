@@ -13,30 +13,34 @@ def ieee_bibtex(id):
         bibtex = re.sub(r'<br>\s*','',r.text)
         bibtex = re.sub(r'\ntitle={(.*)}',r'\ntitle={{\1}}',bibtex)
         bibtex = re.sub(r'\nkeywords={(.*)},','',bibtex)
-        print bibtex, '\n'
+        print(bibtex+'\n')
 
 
 #http://dl.acm.org/exportformats.cfm?id=544220&expformat=bibtex
 def acm_bibtex(parent_id,id):
     s = requests.Session()
     r = s.get('http://dl.acm.org/downformats.cfm?id='+id+'&parent_id='+parent_id+'&expformat=bibtex')
-    print r.text
+    print(r.text)
     bibtex = re.sub(r' url = {.*},\n','',r.text)
     bibtex = re.sub(r' keywords={(.*)},','',bibtex)
     bibtex = re.sub(r' title = {(.*)}',r' title = {{\1}}',bibtex)
-    print bibtex, '\n'
+    print(bibtex+'\n')
 
 
 
-#<a href="/xpl/articleDetails.jsp?tp=&amp;arnumber=7037801&amp;queryText%3Dcloud">
 
 def ieee_search(word):
     s = requests.Session()
-    r = s.post('http://ieeexplore.ieee.org/rest/search?reload=true', data=json.dumps({"queryText": word, "refinements": [], "searchWithin": [], "newsearch": "true"}),
-            headers = {"Content-Type":"application/json", "Accept":"application/json, text/plain, */*","Content-Type":"application/json;charset=UTF-8","User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36"})
+    r = s.post('https://ieeexplore.ieee.org/rest/search', data =  '{"newsearch":true,"queryText":"%s","highlight":true,"returnFacets":["ALL"],"returnType":"SEARCH"}' % (word),
+            headers = {
+                "Accept":"application/json, text/plain, */*",
+                "Content-Type":"application/json",
+                "User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36",
+                "Origin": "https://ieeexplore.ieee.org"
+            })
 
-
-    results = json.loads( r.text)
+    print(r.text)
+    results = json.loads(r.text)
 
     count = 0
     if "records" in results:
@@ -54,32 +58,23 @@ def ieee_search(word):
 def acm_search(word):
     headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.82 Safari/537.36 OPR/39.0.2256.48'}
     s = requests.Session()
-    count = 0
     r =  s.get("http://dl.acm.org/exportformats_search.cfm?query="+ word+"&filtered=&within=owners%2Eowner%3DGUIDE&dte=&bfr=&srt=%5Fscore&expformat=bibtex", stream = True,headers=headers)
     r.raise_for_status()
 
-    your_maximum = 2048
-    size = 0
-    count = 0
-    bibtex = ''
-    for chunk in r.iter_content(1024):
-        size += len(chunk)
-        bibtex = bibtex + chunk
-        count = count + chunk.count("\n@")
-        if count >=3:
-            break
-        if size > your_maximum:
-            break
+    bibtex = r.text
 
     bibtex = re.sub(r' url = {.*},[\r\n]+','',bibtex)
     bibtex = re.sub(r' keywords = {(.*)},[\r\n]+','',bibtex)
     bibtex = re.sub(r' title = {(.*)}',r' title = {{\1}}',bibtex)
-    print bibtex
+    print(bibtex)
     #print repr(bibtex)
 
 
 if __name__ == "__main__":
     word = sys.argv[1]
     #print word
-    ieee_search(word)
+    #ieee_search(word)
     acm_search(word)
+
+
+
